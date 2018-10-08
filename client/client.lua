@@ -28,16 +28,14 @@ Citizen.CreateThread(function()
 
 	PlayerData = ESX.GetPlayerData()
 
-	jailTime = 500
-
-	InJail()
+	LoadTeleporters()
 end)
 
 RegisterNetEvent("esx:playerLoaded")
 AddEventHandler("esx:playerLoaded", function(newData)
 	PlayerData = newData
 
-	Citizen.Wait(5000)
+	Citizen.Wait(25000)
 
 	ESX.TriggerServerCallback("esx-qalle-jail:retrieveJailTime", function(inJail, newJailTime)
 		if inJail then
@@ -56,6 +54,13 @@ AddEventHandler("esx-qalle-jail:jailPlayer", function(newJailTime)
 	Cutscene()
 end)
 
+RegisterNetEvent("esx-qalle-jail:unJailPlayer")
+AddEventHandler("esx-qalle-jail:unJailPlayer", function()
+	jailTime = 0
+
+	UnJail()
+end)
+
 function JailLogin()
 	local JailPosition = Config.JailPositions["Cell"]
 	SetEntityCoords(PlayerPedId(), JailPosition["x"], JailPosition["y"], JailPosition["z"] - 1)
@@ -63,6 +68,16 @@ function JailLogin()
 	ESX.ShowNotification("Last time you went to sleep you were jailed, because of that you are now put back!")
 
 	InJail()
+end
+
+function UnJail()
+	ESX.Game.Teleport(PlayerPedId(), Config.Teleports["Boiling Broke"])
+
+	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
+		TriggerEvent('skinchanger:loadSkin', skin)
+	end)
+
+	ESX.ShowNotification("You are released, stay calm outside! Good LucK!")
 end
 
 function InJail()
@@ -81,6 +96,11 @@ function InJail()
 
 			TriggerServerEvent("esx-qalle-jail:updateJailTime", jailTime)
 
+			if jailTime == 0 then
+				UnJail()
+
+				TriggerServerEvent("esx-qalle-jail:updateJailTime", 0)
+			end
 		end
 
 	end)
@@ -142,6 +162,39 @@ function InJail()
 
 end
 
+function LoadTeleporters()
+	Citizen.CreateThread(function()
+		while true do
+			
+			local sleepThread = 500
+
+			local Ped = PlayerPedId()
+			local PedCoords = GetEntityCoords(Ped)
+
+			for p, v in pairs(Config.Teleports) do
+
+				local DistanceCheck = GetDistanceBetweenCoords(PedCoords, v["x"], v["y"], v["z"], true)
+
+				if DistanceCheck <= 7.5 then
+
+					sleepThread = 5
+
+					ESX.Game.Utils.DrawText3D(v, "[E] Open Door", 0.4)
+
+					if DistanceCheck <= 1.0 then
+						if IsControlJustPressed(0, 38) then
+							TeleportPlayer(v)
+						end
+					end
+				end
+			end
+
+			Citizen.Wait(sleepThread)
+
+		end
+	end)
+end
+
 function PackPackage(packageId)
 	local Package = Config.PrisonWork["Packages"][packageId]
 
@@ -160,7 +213,7 @@ function PackPackage(packageId)
 		
 		Citizen.Wait(1)
 
-		local TimeToTake = 60000 * 0.30 -- Minutes
+		local TimeToTake = 60000 * 1.20 -- Minutes
 		local PackPercent = (GetGameTimer() - StartTime) / TimeToTake * 100
 
 		if not IsPedUsingScenario(PlayerPedId(), "PROP_HUMAN_BUM_BIN") then
