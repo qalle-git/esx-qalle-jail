@@ -11,7 +11,7 @@
 
 2) Import ``jail.sql`` into your database
 
-3) Download ``prison-map-addon`` from ``https://github.com/qalle-fivem/prison-map-addon``
+3) Download ``prison-map-addon`` from https://github.com/qalle-fivem/prison-map-addon
 
 4) Add this in your server.cfg :
 ``start esx-qalle-jail``
