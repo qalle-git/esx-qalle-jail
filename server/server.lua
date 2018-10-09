@@ -20,7 +20,9 @@ RegisterCommand("jail", function(src, args, raw)
 				TriggerClientEvent("esx:showNotification", src, GetPlayerName(jailPlayer) .. " Jailed for " .. jailTime .. " minutes!")
 
 				GetRPName(jailPlayer, function(Firstname, Lastname)
-					TriggerClientEvent('chat:addMessage', -1, { args = { "JUDGE",  Firstname .. " " .. Lastname .. " Is now in jail for the reason: " .. args[3] }, color = { 249, 166, 0 } })
+					if args[3] ~= nil then
+						TriggerClientEvent('chat:addMessage', -1, { args = { "JUDGE",  Firstname .. " " .. Lastname .. " Is now in jail for the reason: " .. args[3] }, color = { 249, 166, 0 } })
+					end
 				end)
 			else
 				TriggerClientEvent("esx:showNotification", src, "This time is invalid!")
@@ -118,15 +120,13 @@ ESX.RegisterServerCallback("esx-qalle-jail:retrieveJailTime", function(source, c
 
 	MySQL.Async.fetchAll("SELECT jail FROM users WHERE identifier = @identifier", { ["@identifier"] = Identifier }, function(result)
 
-		local JailTime = result[1]["jail"]
+		local JailTime = result[1].jail
 
-		if JailTime ~= nil or JailTime ~= 0 then
+		if JailTime > 0 then
 
-			local IsJailed = true
-
-			cb(IsJailed, JailTime)
+			cb(true, JailTime)
 		else
-			cb(false, false)
+			cb(false, 0)
 		end
 
 	end)

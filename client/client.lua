@@ -71,6 +71,8 @@ function JailLogin()
 end
 
 function UnJail()
+	InJail()
+
 	ESX.Game.Teleport(PlayerPedId(), Config.Teleports["Boiling Broke"])
 
 	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
