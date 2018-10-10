@@ -120,7 +120,7 @@ ESX.RegisterServerCallback("esx-qalle-jail:retrieveJailTime", function(source, c
 
 	MySQL.Async.fetchAll("SELECT jail FROM users WHERE identifier = @identifier", { ["@identifier"] = Identifier }, function(result)
 
-		local JailTime = result[1].jail
+		local JailTime = tonumber(result[1].jail)
 
 		if JailTime > 0 then
 
