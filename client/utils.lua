@@ -1,3 +1,12 @@
+RegisterCommand("jailmenu", function(source, args)
+
+	if PlayerData.job.name == "police" then
+		OpenJailMenu()
+	else
+		ESX.ShowNotification("You are not an officer!")
+	end
+end)
+
 function LoadAnim(animDict)
 	RequestAnimDict(animDict)
 

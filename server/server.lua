@@ -2,17 +2,6 @@ ESX                = nil
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
-RegisterCommand("jailmenu", function(src, args)
-
-	local xPlayer = ESX.GetPlayerFromId(src)
-
-	if xPlayer["job"]["name"] == "police" then
-		TriggerClientEvent("esx-qalle-jail:openJailMenu", src)
-	else
-		TriggerClientEvent("esx:showNotification", src, "You are not an officer!")
-	end
-end)
-
 RegisterCommand("jail", function(src, args, raw)
 
 	local xPlayer = ESX.GetPlayerFromId(src)
