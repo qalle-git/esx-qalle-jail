@@ -10,10 +10,34 @@
 
 *This is a script made for you that wan't something out of the ordinary, this is a jail script that will add some cool side effects of getting jailed, one of em is that when you get jailed you will be teleported to the charactermugshot creation, and an sheriff ped will take a photo of you. The other thing is that you can work for a small amount of cash while in jail.*
 
+[EXTRAS]
+
+* Add To Police Menu Example ->
+
+```lua
+        elements = {
+            {label = _U('citizen_interaction'),	value = 'citizen_interaction'},
+            {label = _U('vehicle_interaction'),	value = 'vehicle_interaction'},
+            {label = _U('object_spawner'),		value = 'object_spawner'},
+            {label = "Jail Menu",               value = 'jail_menu'} -- You add this line
+        }
+    }, function(data, menu)
+
+        --You add this
+
+        if data.current.value == 'jail_menu' then
+            TriggerEvent("esx-qalle-jail:openJailMenu")
+        end
+
+        --Above This
+        if data.current.value == 'citizen_interaction' then
+```
+
 [USAGE]
 
-`/jail ID jailTime(minutes) "description"`  command (only players who have the job "police")
+`/jail ID jailTime(minutes) "description"` command (only players who have the job "police")
 `/unjail ID` to unjail a player (only players who have the job "police")
+`/jailmenu` quick command if you dont want the menu. (only players who have the job "police")
 
 [REQUIREMENTS]
   

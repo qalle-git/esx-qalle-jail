@@ -46,7 +46,6 @@ Config.Teleports = {
 		["z"] = 45.672061920166, 
 		["h"] = 92.469093322754, 
 		["goal"] = { 
-			"Jail", 
 			"Security" 
 		} 
 	},

@@ -47,6 +47,11 @@ AddEventHandler("esx:playerLoaded", function(newData)
 	end)
 end)
 
+RegisterNetEvent("esx-qalle-jail:openJailMenu")
+AddEventHandler("esx-qalle-jail:openJailMenu", function()
+	OpenJailMenu()
+end)
+
 RegisterNetEvent("esx-qalle-jail:jailPlayer")
 AddEventHandler("esx-qalle-jail:jailPlayer", function(newJailTime)
 	jailTime = newJailTime
@@ -90,8 +95,6 @@ function InJail()
 
 		while jailTime > 0 do
 
-			Citizen.Wait(60000)
-
 			jailTime = jailTime - 1
 
 			ESX.ShowNotification("You have " .. jailTime .. " minutes left in jail!")
@@ -103,6 +106,8 @@ function InJail()
 
 				TriggerServerEvent("esx-qalle-jail:updateJailTime", 0)
 			end
+
+			Citizen.Wait(60000)
 		end
 
 	end)
@@ -284,5 +289,119 @@ function DeliverPackage(packageId)
 
 	end
 
+end
+
+function OpenJailMenu()
+	ESX.UI.Menu.Open(
+		'default', GetCurrentResourceName(), 'jail_prison_menu',
+		{
+			title    = "Prison Menu",
+			align    = 'center',
+			elements = {
+				{ label = "Jail Closest Person", value = "jail_closest_player" },
+				{ label = "Unjail Person", value = "unjail_player" }
+			}
+		}, 
+	function(data, menu)
+
+		local action = data.current.value
+
+		if action == "jail_closest_player" then
+
+			menu.close()
+
+			ESX.UI.Menu.Open(
+          		'dialog', GetCurrentResourceName(), 'jail_choose_time_menu',
+          		{
+            		title = "Jail Time (minutes)"
+          		},
+          	function(data2, menu2)
+
+            	local jailTime = tonumber(data2.value)
+
+            	if jailTime == nil then
+              		ESX.ShowNotification("The time needs to be in minutes!")
+            	else
+              		menu2.close()
+
+              		local closestPlayer, closestDistance = ESX.Game.GetClosestPlayer()
+
+              		if closestPlayer == -1 or closestDistance > 3.0 then
+                		ESX.ShowNotification("No players nearby!")
+					else
+						ESX.UI.Menu.Open(
+							'dialog', GetCurrentResourceName(), 'jail_choose_reason_menu',
+							{
+							  title = "Jail Reason"
+							},
+						function(data3, menu3)
+		  
+						  	local reason = data3.value
+		  
+						  	if reason == nil then
+								ESX.ShowNotification("You need to put something here!")
+						  	else
+								menu3.close()
+		  
+								local closestPlayer, closestDistance = ESX.Game.GetClosestPlayer()
+		  
+								if closestPlayer == -1 or closestDistance > 3.0 then
+								  	ESX.ShowNotification("No players nearby!")
+								else
+								  	TriggerServerEvent("esx-qalle-jail:jailPlayer", GetPlayerServerId(closestPlayer), jailTime, reason)
+								end
+		  
+						  	end
+		  
+						end, function(data3, menu3)
+							menu3.close()
+						end)
+              		end
+
+				end
+
+          	end, function(data2, menu2)
+				menu2.close()
+			end)
+		elseif action == "unjail_player" then
+
+			local elements = {}
+
+			ESX.TriggerServerCallback("esx-qalle-jail:retrieveJailedPlayers", function(playerArray)
+
+				if #playerArray == 0 then
+					ESX.ShowNotification("Your jail is empty!")
+					return
+				end
+
+				for i = 1, #playerArray, 1 do
+					table.insert(elements, {label = "Prisoner: " .. playerArray[i].name .. " | Jail Time: " .. playerArray[i].jailTime .. " minutes", value = playerArray[i].identifier })
+				end
+
+				ESX.UI.Menu.Open(
+					'default', GetCurrentResourceName(), 'jail_unjail_menu',
+					{
+						title = "Unjail Player",
+						align = "center",
+						elements = elements
+					},
+				function(data2, menu2)
+
+					local action = data2.current.value
+
+					TriggerServerEvent("esx-qalle-jail:unJailPlayer", action)
+
+					menu2.close()
+
+				end, function(data2, menu2)
+					menu2.close()
+				end)
+			end)
+
+		end
+
+	end, function(data, menu)
+		menu.close()
+	end)	
 end
 

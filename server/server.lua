@@ -2,6 +2,17 @@ ESX                = nil
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
+RegisterCommand("jailmenu", function(src, args)
+
+	local xPlayer = ESX.GetPlayerFromId(src)
+
+	if xPlayer["job"]["name"] == "police" then
+		TriggerClientEvent("esx-qalle-jail:openJailMenu", src)
+	else
+		TriggerClientEvent("esx:showNotification", src, "You are not an officer!")
+	end
+end)
+
 RegisterCommand("jail", function(src, args, raw)
 
 	local xPlayer = ESX.GetPlayerFromId(src)
@@ -18,12 +29,12 @@ RegisterCommand("jail", function(src, args, raw)
 				JailPlayer(jailPlayer, jailTime)
 
 				TriggerClientEvent("esx:showNotification", src, GetPlayerName(jailPlayer) .. " Jailed for " .. jailTime .. " minutes!")
-
-				GetRPName(jailPlayer, function(Firstname, Lastname)
-					if args[3] ~= nil then
+				
+				if args[3] ~= nil then
+					GetRPName(jailPlayer, function(Firstname, Lastname)
 						TriggerClientEvent('chat:addMessage', -1, { args = { "JUDGE",  Firstname .. " " .. Lastname .. " Is now in jail for the reason: " .. args[3] }, color = { 249, 166, 0 } })
-					end
-				end)
+					end)
+				end
 			else
 				TriggerClientEvent("esx:showNotification", src, "This time is invalid!")
 			end
@@ -53,6 +64,39 @@ RegisterCommand("unjail", function(src, args)
 	end
 end)
 
+RegisterServerEvent("esx-qalle-jail:jailPlayer")
+AddEventHandler("esx-qalle-jail:jailPlayer", function(targetSrc, jailTime, jailReason)
+	local src = source
+	local targetSrc = tonumber(targetSrc)
+
+	JailPlayer(targetSrc, jailTime)
+
+	GetRPName(targetSrc, function(Firstname, Lastname)
+		TriggerClientEvent('chat:addMessage', -1, { args = { "JUDGE",  Firstname .. " " .. Lastname .. " Is now in jail for the reason: " .. jailReason }, color = { 249, 166, 0 } })
+	end)
+
+	TriggerClientEvent("esx:showNotification", src, GetPlayerName(targetSrc) .. " Jailed for " .. jailTime .. " minutes!")
+end)
+
+RegisterServerEvent("esx-qalle-jail:unJailPlayer")
+AddEventHandler("esx-qalle-jail:unJailPlayer", function(targetIdentifier)
+	local src = source
+	local xPlayer = ESX.GetPlayerFromIdentifier(targetIdentifier)
+
+	if xPlayer ~= nil then
+		UnJail(xPlayer.source)
+	else
+		MySQL.Async.execute(
+			"UPDATE users SET jail = @newJailTime WHERE identifier = @identifier",
+			{
+				['@identifier'] = targetIdentifier,
+				['@newJailTime'] = 0
+			}
+		)
+	end
+
+	TriggerClientEvent("esx:showNotification", src, xPlayer.name .. " Unjailed!")
+end)
 
 RegisterServerEvent("esx-qalle-jail:updateJailTime")
 AddEventHandler("esx-qalle-jail:updateJailTime", function(newJailTime)
@@ -109,6 +153,20 @@ function GetRPName(playerId, data)
 
 	end)
 end
+
+ESX.RegisterServerCallback("esx-qalle-jail:retrieveJailedPlayers", function(source, cb)
+	
+	local jailedPersons = {}
+
+	MySQL.Async.fetchAll("SELECT firstname, lastname, jail, identifier FROM users WHERE jail > @jail", { ["@jail"] = 0 }, function(result)
+
+		for i = 1, #result, 1 do
+			table.insert(jailedPersons, { name = result[i].firstname .. " " .. result[i].lastname, jailTime = result[i].jail, identifier = result[i].identifier })
+		end
+
+		cb(jailedPersons)
+	end)
+end)
 
 ESX.RegisterServerCallback("esx-qalle-jail:retrieveJailTime", function(source, cb)
 

@@ -36,9 +36,7 @@ end
 function Cutscene()
 	DoScreenFadeOut(100)
 
-	while not IsScreenFadedOut() do
-		Citizen.Wait(0)
-	end
+	Citizen.Wait(250)
 
 	local Male = GetHashKey("mp_m_freemode_01")
 
@@ -92,9 +90,7 @@ function Cutscene()
 	DeleteEntity(Police)
 	SetModelAsNoLongerNeeded(-1320879687)
 
-	while not IsScreenFadedOut() do
-		Citizen.Wait(0)
-	end
+	Citizen.Wait(1000)
 
 	DoScreenFadeIn(250)
 
@@ -154,9 +150,7 @@ function TeleportPlayer(pos)
 
 			DoScreenFadeOut(100)
 
-			while not IsScreenFadedOut() do
-				Citizen.Wait(0)
-			end
+			Citizen.Wait(250)
 
 			SetEntityCoords(PlayerPedId(), position["x"], position["y"], position["z"])
 
@@ -174,9 +168,7 @@ function TeleportPlayer(pos)
 
 		DoScreenFadeOut(100)
 
-		while not IsScreenFadedOut() do
-			Citizen.Wait(0)
-		end
+		Citizen.Wait(250)
 
 		SetEntityCoords(PlayerPedId(), position["x"], position["y"], position["z"])
 
