@@ -47,6 +47,11 @@ AddEventHandler("esx:playerLoaded", function(newData)
 	end)
 end)
 
+RegisterNetEvent("esx:setJob")
+AddEventHandler("esx:setJob", function(response)
+	PlayerData["job"] = response
+end)
+
 RegisterNetEvent("esx-qalle-jail:openJailMenu")
 AddEventHandler("esx-qalle-jail:openJailMenu", function()
 	OpenJailMenu()
