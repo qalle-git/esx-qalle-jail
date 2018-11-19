@@ -49,28 +49,14 @@ function Cutscene()
 
 	local Male = GetHashKey("mp_m_freemode_01")
 
+	
 	TriggerEvent('skinchanger:getSkin', function(skin)
-		if GetHashKey(GetEntityModel(PlayerPedId())) == Male then
-			local clothesSkin = {
-				['tshirt_1'] = 15, ['tshirt_2'] = 0,
-				['torso_1'] = 146, ['torso_2'] = 0,
-				['arms'] = 0,
-				['pants_1'] = 3, ['pants_2'] = 7,
-				['shoes_1'] = 12, ['shoes_2'] = 12,
-			}
-			TriggerEvent('skinchanger:loadClothes', skin, clothesSkin)
-
-		else
-			local clothesSkin = {
-				['tshirt_1'] = 3, ['tshirt_2'] = 0,
-				['torso_1'] = 38, ['torso_2'] = 3,
-				['arms'] = 2,
-				['pants_1'] = 3, ['pants_2'] = 15,
-				['shoes_1'] = 66, ['shoes_2'] = 0,
-			}
-			TriggerEvent('skinchanger:loadClothes', skin, clothesSkin)
-		end
-	end)
+				if skin.sex == 0 then
+					TriggerEvent('skinchanger:loadClothes', skin, Config.Uniforms['prison_wear'].male)
+				else
+					TriggerEvent('skinchanger:loadClothes', skin, Config.Uniforms['prison_wear'].female)
+				end
+			end)
 
 	LoadModel(-1320879687)
 
