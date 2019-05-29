@@ -6,7 +6,7 @@ RegisterCommand("jail", function(src, args, raw)
 
 	local xPlayer = ESX.GetPlayerFromId(src)
 
-	if xPlayer["job"]["name"] == "police" then
+	if xPlayer["job"]["name"] == "police" or xPlayer.getGroup() ~= 'admin' then
 
 		local jailPlayer = args[1]
 		local jailTime = tonumber(args[2])
@@ -39,7 +39,7 @@ RegisterCommand("unjail", function(src, args)
 
 	local xPlayer = ESX.GetPlayerFromId(src)
 
-	if xPlayer["job"]["name"] == "police" then
+	if xPlayer["job"]["name"] == "police" or xPlayer.getGroup() ~= 'admin' then
 
 		local jailPlayer = args[1]
 
