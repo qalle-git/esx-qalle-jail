@@ -97,7 +97,8 @@ function InJail()
 	--Jail Timer--
 
 	Citizen.CreateThread(function()
-
+	local playerPed = PlayerPedId()
+	local JailPosition = Config.JailPositions["Cell"]
 		while jailTime > 0 do
 
 			jailTime = jailTime - 1
