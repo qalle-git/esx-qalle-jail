@@ -57,7 +57,7 @@ RegisterServerEvent("esx-qalle-jail:jailPlayer")
 AddEventHandler("esx-qalle-jail:jailPlayer", function(targetSrc, jailTime, jailReason)
 	local src = source
 	local targetSrc = tonumber(targetSrc)
-	local xPlayer = ESX.GetPlayerFromId(src)
+	local xPlayer = ESX.GetPlayerFromId(source)
 
 	if xPlayer["job"]["name"] == Config.Policejob then
 
