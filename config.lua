@@ -1,5 +1,7 @@
 Config = {}
 
+Config.Policejob = 'police'
+
 Config.JailPositions = {
 	["Cell"] = { ["x"] = 1799.8345947266, ["y"] = 2489.1350097656, ["z"] = -119.02998352051, ["h"] = 179.03021240234 }
 }
