@@ -132,6 +132,9 @@ RegisterServerEvent("esx-qalle-jail:prisonWorkReward")
 AddEventHandler("esx-qalle-jail:prisonWorkReward", function()
 	local src = source
 	if blacklistedSources[src] == nil or blacklistedSources[src] == false then
+		if inCooldown[src] == true then
+			blacklistedSources[src] = true
+		end
 		inCooldown[src] = true
 		local xPlayer = ESX.GetPlayerFromId(src)
 
