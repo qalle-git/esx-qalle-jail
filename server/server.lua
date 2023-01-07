@@ -119,15 +119,27 @@ AddEventHandler("esx-qalle-jail:updateJailTime", function(newJailTime)
 	EditJailTime(src, newJailTime)
 end)
 
+local blacklistedSources = {}
+local inCooldown = {}
+
+function resetCooldown(source)
+	local source = source
+	Citizen.Wait(1250)	
+	inCooldown[source] = false
+end
+
 RegisterServerEvent("esx-qalle-jail:prisonWorkReward")
 AddEventHandler("esx-qalle-jail:prisonWorkReward", function()
 	local src = source
+	if blacklistedSources[src] == nil or blacklistedSources[src] == false then
+		inCooldown[src] = true
+		local xPlayer = ESX.GetPlayerFromId(src)
 
-	local xPlayer = ESX.GetPlayerFromId(src)
+		xPlayer.addMoney(math.random(13, 21))
 
-	xPlayer.addMoney(math.random(13, 21))
-
-	TriggerClientEvent("esx:showNotification", src, "Thanks, here you have som cash for food!")
+		TriggerClientEvent("esx:showNotification", src, "Thanks, here you have som cash for food!")
+		resetCooldown(src)
+	end
 end)
 
 function JailPlayer(jailPlayer, jailTime)
