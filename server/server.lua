@@ -75,7 +75,7 @@ AddEventHandler("esx-qalle-jail:jailPlayer", function(targetSrc, jailTime, jailR
 	local src = source
 	local xPlayer = ESX.GetPlayerFromId(src)
 		
-	if hasPermission(xPlayer) thenm
+	if hasPermission(xPlayer) then
 		local targetSrc = tonumber(targetSrc)
 
 		JailPlayer(targetSrc, jailTime)
