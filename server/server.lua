@@ -5,7 +5,7 @@ ESX = exports['es_extended']:getSharedObject()
 -- Permission Check
 local allowedJobs = Config.AllowedJobs
 
-function hasPermission(xPlayer)(xPlayer)
+function hasPermission(xPlayer)
 	local xPlayer = xPlayer
 	local allowed = false
 	local playerJob = xPlayer["job"]["name"]
