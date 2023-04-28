@@ -57,12 +57,17 @@ RegisterServerEvent("esx-qalle-jail:jailPlayer")
 AddEventHandler("esx-qalle-jail:jailPlayer", function(targetSrc, jailTime, jailReason)
 	local src = source
 	local targetSrc = tonumber(targetSrc)
+	local xPlayer = ESX.GetPlayerFromId(src)
+	
+	if xPlayer.job.name == 'police' then
+		JailPlayer(targetSrc, jailTime)
 
-	JailPlayer(targetSrc, jailTime)
-
-	GetRPName(targetSrc, function(Firstname, Lastname)
-		TriggerClientEvent('chat:addMessage', -1, { args = { "JUDGE",  Firstname .. " " .. Lastname .. " Is now in jail for the reason: " .. jailReason }, color = { 249, 166, 0 } })
-	end)
+		GetRPName(targetSrc, function(Firstname, Lastname)
+			TriggerClientEvent('chat:addMessage', -1, { args = { "JUDGE",  Firstname .. " " .. Lastname .. " Is now in jail for the reason: " .. jailReason }, color = { 249, 166, 0 } })
+		end)
+	else
+		DropPlayer(src, "[esx-qalle-jail]: You have been kicked for trying to exploit a server event.")
+	end
 
 	TriggerClientEvent("esx:showNotification", src, GetPlayerName(targetSrc) .. " Jailed for " .. jailTime .. " minutes!")
 end)
