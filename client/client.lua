@@ -97,7 +97,8 @@ function InJail()
 	--Jail Timer--
 
 	Citizen.CreateThread(function()
-
+	local playerPed = PlayerPedId()
+	local JailPosition = Config.JailPositions["Cell"]
 		while jailTime > 0 do
 
 			jailTime = jailTime - 1
@@ -105,6 +106,11 @@ function InJail()
 			ESX.ShowNotification("You have " .. jailTime .. " minutes left in jail!")
 
 			TriggerServerEvent("esx-qalle-jail:updateJailTime", jailTime)
+			if GetDistanceBetweenCoords(GetEntityCoords(playerPed), JailPosition.x, JailPosition.y, JailPosition.z) > 50 then
+					ESX.Game.Teleport(playerPed, JailPosition)
+					Citizen.Wait(1000)
+					ESX.Game.Teleport(playerPed, JailPosition)
+			end
 
 			if jailTime == 0 then
 				UnJail()
